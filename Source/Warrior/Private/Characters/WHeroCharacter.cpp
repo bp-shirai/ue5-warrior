@@ -2,6 +2,7 @@
 
 #include "Characters/WHeroCharacter.h"
 
+#include "AbilitySystem/WAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Input/WInputComponent.h"
@@ -37,6 +38,19 @@ AWHeroCharacter::AWHeroCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 }
 
+void AWHeroCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (WAbilitySystemComponent && WAttributeSet)
+	{
+		const FString ASCText = FString::Printf(TEXT("Owner Actor: %s, AvatarActor: %s"), *WAbilitySystemComponent->GetOwnerActor()->GetActorLabel(), *WAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
+		Debug::Print(TEXT("Ability system component valid. ") + ASCText, FColor::Green);
+		Debug::Print(TEXT("AttributeSet valid. ") + ASCText, FColor::Green);
+
+	}
+}
+
 void AWHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	checkf(InputConfigDataAsset, TEXT("Forgot to assign a valid data asset as input config"));
@@ -55,10 +69,7 @@ void AWHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
 }
 
-void AWHeroCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-}
+void AWHeroCharacter::BeginPlay() { Super::BeginPlay(); }
 
 void AWHeroCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
