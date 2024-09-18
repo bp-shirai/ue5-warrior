@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/Input/WInputComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
+#include "DataAssets/StartUpData/DataAsset_HeroStartUpData.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -42,12 +43,9 @@ void AWHeroCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (WAbilitySystemComponent && WAttributeSet)
+	if (!CharacterStartUpData.IsNull())
 	{
-		const FString ASCText = FString::Printf(TEXT("Owner Actor: %s, AvatarActor: %s"), *WAbilitySystemComponent->GetOwnerActor()->GetActorLabel(), *WAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
-		Debug::Print(TEXT("Ability system component valid. ") + ASCText, FColor::Green);
-		Debug::Print(TEXT("AttributeSet valid. ") + ASCText, FColor::Green);
-
+		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous()) { LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent); }
 	}
 }
 

@@ -9,6 +9,7 @@
 
 class UWAbilitySystemComponent;
 class UWAttributeSet;
+class UDataAsset_StartUpDataBase;
 
 UCLASS(Abstract)
 class WARRIOR_API AWBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -32,6 +33,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
 	TObjectPtr<UWAttributeSet> WAttributeSet;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
+	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
 
 public:
 	FORCEINLINE UWAbilitySystemComponent* GetWAbilitySystemComponent() const { return WAbilitySystemComponent; }

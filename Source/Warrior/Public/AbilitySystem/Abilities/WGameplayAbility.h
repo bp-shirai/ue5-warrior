@@ -16,7 +16,8 @@ enum class EWAbilityActivationPolicy : uint8
 /**
  *
  */
-UCLASS() class WARRIOR_API UWGameplayAbility : public UGameplayAbility
+UCLASS(Abstract) 
+class WARRIOR_API UWGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 

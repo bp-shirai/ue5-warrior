@@ -21,7 +21,12 @@ void AWBaseCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (WAbilitySystemComponent) { WAbilitySystemComponent->InitAbilityActorInfo(this, this); }
+	if (WAbilitySystemComponent)
+	{
+		WAbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+		ensureMsgf(!CharacterStartUpData.IsNull(), TEXT("Forgot to assign start up data to %s"), *GetName());
+	}
 }
 
 UAbilitySystemComponent* AWBaseCharacter::GetAbilitySystemComponent() const { return GetWAbilitySystemComponent(); }
