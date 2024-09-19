@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "AbilitySystemComponent.h"
 #include "WAbilitySystemComponent.generated.h"
 

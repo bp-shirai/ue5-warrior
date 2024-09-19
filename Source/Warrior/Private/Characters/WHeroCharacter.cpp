@@ -99,3 +99,7 @@ void AWHeroCharacter::Input_Look(const FInputActionValue& InputActionValue)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+
+void AWHeroCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag) {}
+
+void AWHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag) {}

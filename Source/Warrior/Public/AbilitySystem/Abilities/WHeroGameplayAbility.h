@@ -3,7 +3,7 @@
 #pragma once
 
 #include "AbilitySystem/Abilities/WGameplayAbility.h"
-#include "CoreMinimal.h"
+
 #include "WHeroGameplayAbility.generated.h"
 
 class AWHeroCharacter;

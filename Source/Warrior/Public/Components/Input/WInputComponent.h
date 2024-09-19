@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "EnhancedInputComponent.h"
 #include "WInputComponent.generated.h"

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "Items/Weapons/WWeaponBase.h"
 #include "WHeroWeapon.generated.h"
 

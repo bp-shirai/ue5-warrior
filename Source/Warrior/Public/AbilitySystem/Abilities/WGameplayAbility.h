@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Abilities/GameplayAbility.h"
-#include "CoreMinimal.h"
+
 #include "WGameplayAbility.generated.h"
 
 class UPawnCombatComponent;

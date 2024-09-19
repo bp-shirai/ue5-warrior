@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/PawnExtensionComponentBase.h"
-#include "CoreMinimal.h"
+
 #include "GameplayTagContainer.h"
 #include "PawnCombatComponent.generated.h"
 

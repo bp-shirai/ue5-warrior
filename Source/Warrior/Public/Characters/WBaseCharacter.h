@@ -3,7 +3,7 @@
 #pragma once
 
 #include "AbilitySystemInterface.h"
-#include "CoreMinimal.h"
+
 #include "GameFramework/Character.h"
 #include "WBaseCharacter.generated.h"
 

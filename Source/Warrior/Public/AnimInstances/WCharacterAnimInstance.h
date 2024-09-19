@@ -3,7 +3,7 @@
 #pragma once
 
 #include "AnimInstances/WBaseAnimInstance.h"
-#include "CoreMinimal.h"
+
 #include "WCharacterAnimInstance.generated.h"
 
 class AWBaseCharacter;
@@ -28,10 +28,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UCharacterMovementComponent> OwningMovementComponent;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
 	float GroundSpeed;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
 	bool bHasAcceleration;
-
 };

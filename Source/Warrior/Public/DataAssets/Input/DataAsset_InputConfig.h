@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
 #include "DataAsset_InputConfig.generated.h"

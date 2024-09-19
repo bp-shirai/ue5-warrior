@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameplayTagContainer.h"
 #include "DataAsset_HeroStartUpData.generated.h"
