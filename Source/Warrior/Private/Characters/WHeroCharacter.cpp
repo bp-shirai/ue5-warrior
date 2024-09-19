@@ -5,6 +5,7 @@
 #include "AbilitySystem/WAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/Combat/HeroCombatComponent.h"
 #include "Components/Input/WInputComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "DataAssets/StartUpData/DataAsset_HeroStartUpData.h"
@@ -37,6 +38,8 @@ AWHeroCharacter::AWHeroCharacter()
 	GetCharacterMovement()->RotationRate			   = FRotator(0.f, 500.f, 0.f);
 	GetCharacterMovement()->BrakingDecelerationWalking = 400.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComponent");
 }
 
 void AWHeroCharacter::PossessedBy(AController* NewController)

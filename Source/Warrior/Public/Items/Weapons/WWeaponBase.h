@@ -17,10 +17,10 @@ public:
 	AWWeaponBase();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|Weapons")
 	TObjectPtr<UStaticMeshComponent> WeaponMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|Weapons")
 	TObjectPtr<UBoxComponent> WeaponCollisionBox;
 
 public:

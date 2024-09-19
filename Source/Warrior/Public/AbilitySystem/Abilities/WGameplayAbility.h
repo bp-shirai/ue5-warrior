@@ -6,6 +6,9 @@
 #include "CoreMinimal.h"
 #include "WGameplayAbility.generated.h"
 
+class UPawnCombatComponent;
+class UWAbilitySystemComponent;
+
 UENUM(BlueprintType)
 enum class EWAbilityActivationPolicy : uint8
 {
@@ -16,7 +19,7 @@ enum class EWAbilityActivationPolicy : uint8
 /**
  *
  */
-UCLASS(Abstract) 
+UCLASS(Abstract)
 class WARRIOR_API UWGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
@@ -27,6 +30,12 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	//~ End UGameplayAbility Interface
 
-	UPROPERTY(EditDefaultsOnly, Category = "WarriorAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "Warrior|Ability")
 	EWAbilityActivationPolicy AbilityActivationPolicy = EWAbilityActivationPolicy::OnTriggered;
+
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UPawnCombatComponent* GetPawnCombatComponentFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UWAbilitySystemComponent* GetWAbilitySystemComponentFromActorInfo() const;
 };

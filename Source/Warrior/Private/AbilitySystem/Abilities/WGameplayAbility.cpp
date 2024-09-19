@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/Abilities/WGameplayAbility.h"
 #include "AbilitySystem/WAbilitySystemComponent.h"
+#include "Components/Combat/PawnCombatComponent.h"
 
 void UWGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -21,4 +22,18 @@ void UWGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 	{
 		if (ActorInfo) { ActorInfo->AbilitySystemComponent->ClearAbility(Handle); }
 	}
+}
+
+UPawnCombatComponent* UWGameplayAbility::GetPawnCombatComponentFromActorInfo() const
+{
+	if (!ensure(CurrentActorInfo) || !ensure(CurrentActorInfo->AvatarActor.IsValid())) { return nullptr; }
+	return CurrentActorInfo->AvatarActor.Get()->FindComponentByClass<UPawnCombatComponent>();
+}
+
+UWAbilitySystemComponent* UWGameplayAbility::GetWAbilitySystemComponentFromActorInfo() const
+{
+	UAbilitySystemComponent* AbilitySystemComponent = CurrentActorInfo ? CurrentActorInfo->AbilitySystemComponent.Get() : nullptr;
+	ensure(AbilitySystemComponent);
+
+	return Cast<UWAbilitySystemComponent>(AbilitySystemComponent);
 }

@@ -7,7 +7,6 @@
 #include "GameplayTagContainer.h"
 #include "DataAsset_InputConfig.generated.h"
 
-
 class UInputAction;
 class UInputMappingContext;
 
@@ -16,12 +15,13 @@ struct FWInputActionConfig
 {
 	GENERATED_BODY()
 
-  public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "Input"))
 	FGameplayTag InputTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction> InputAction;
+
+	bool IsValid() const { return InputTag.IsValid() && InputAction; }
 };
 
 /**
@@ -32,7 +32,7 @@ class WARRIOR_API UDataAsset_InputConfig : public UDataAsset
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
@@ -40,4 +40,7 @@ class WARRIOR_API UDataAsset_InputConfig : public UDataAsset
 	TArray<FWInputActionConfig> NativeInputActions;
 
 	UInputAction* FindNativeInputActionByTag(const FGameplayTag& InInputTag) const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+	TArray<FWInputActionConfig> AbilityInputActions;
 };
