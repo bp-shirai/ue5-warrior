@@ -27,6 +27,7 @@ void UWGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 UPawnCombatComponent* UWGameplayAbility::GetPawnCombatComponentFromActorInfo() const
 {
 	if (!ensure(CurrentActorInfo) || !ensure(CurrentActorInfo->AvatarActor.IsValid())) { return nullptr; }
+
 	return CurrentActorInfo->AvatarActor.Get()->FindComponentByClass<UPawnCombatComponent>();
 }
 

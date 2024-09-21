@@ -19,10 +19,10 @@ class WARRIOR_API UPawnCombatComponent : public UPawnExtensionComponentBase
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
-	void RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AWWeaponBase* InWeaponToRegister, bool bResisterAsEquippedWeapon = false);
+	void RegisterSpawnedWeapon(FGameplayTag InWeaponTag, AWWeaponBase* InWeapon, bool bResisterAsEquippedWeapon = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
-	AWWeaponBase* GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const;
+	AWWeaponBase* GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Warrior|Combat")
 	FGameplayTag CurrentEquippedWeaponTag;
@@ -31,5 +31,5 @@ public:
 	AWWeaponBase* GetCharacterCurrentEquippedWeapon() const;
 
 private:
-	TMap<FGameplayTag, AWWeaponBase*> CharacterCarriedWeaponMap;
+	TMap<FGameplayTag, TObjectPtr<AWWeaponBase>> CharacterCarriedWeaponMap;
 };

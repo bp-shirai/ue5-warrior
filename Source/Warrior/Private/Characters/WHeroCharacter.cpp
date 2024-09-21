@@ -48,7 +48,11 @@ void AWHeroCharacter::PossessedBy(AController* NewController)
 
 	if (!CharacterStartUpData.IsNull())
 	{
-		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous()) { LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent); }
+		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
+		{
+			// Grants an Abilities
+			LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent);
+		}
 	}
 }
 
@@ -68,6 +72,8 @@ void AWHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
+
+	WInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 }
 
 void AWHeroCharacter::BeginPlay() { Super::BeginPlay(); }
@@ -100,6 +106,15 @@ void AWHeroCharacter::Input_Look(const FInputActionValue& InputActionValue)
 	}
 }
 
-void AWHeroCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag) {}
+void AWHeroCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
+{
+	// Debug::Print(InInputTag.ToString());
+	if (!ensure(WAbilitySystemComponent)) return;
+	WAbilitySystemComponent->OnAbilityInputPressed(InInputTag);
+}
 
-void AWHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag) {}
+void AWHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
+{
+	if (!ensure(WAbilitySystemComponent)) return;
+	WAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
+}

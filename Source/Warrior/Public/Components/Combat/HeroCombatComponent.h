@@ -2,16 +2,19 @@
 
 #pragma once
 
-
 #include "Components/Combat/PawnCombatComponent.h"
 #include "HeroCombatComponent.generated.h"
 
+class AWHeroWeapon;
 /**
- * 
+ *
  */
 UCLASS()
 class WARRIOR_API UHeroCombatComponent : public UPawnCombatComponent
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	AWHeroWeapon* GetHeroCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
 };

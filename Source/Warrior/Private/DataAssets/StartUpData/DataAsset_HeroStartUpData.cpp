@@ -5,7 +5,7 @@
 #include "AbilitySystem/WAbilitySystemComponent.h"
 
 
-bool FWHeroAbilitySet::IsValid() const { return InputTag.IsValid() && AbilityToGrant; }
+
 
 void UDataAsset_HeroStartUpData::GiveToAbilitySystemComponent(UWAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
  {

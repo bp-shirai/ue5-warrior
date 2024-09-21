@@ -5,24 +5,23 @@
 
 #include "WDebugHelper.h"
 
-void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AWWeaponBase* InWeaponToRegister, bool bResisterAsEquippedWeapon)
+void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTag, AWWeaponBase* InWeapon, bool bResisterAsEquippedWeapon)
 {
-	checkf(!CharacterCarriedWeaponMap.Contains(InWeaponTagToRegister), TEXT("A named %s has already been added as carried weapon"), *InWeaponTagToRegister.ToString());
-	check(InWeaponToRegister);
+	checkf(!CharacterCarriedWeaponMap.Contains(InWeaponTag), TEXT("A named %s has already been added as carried weapon"), *InWeaponTag.ToString());
+	check(InWeapon);
 
-	CharacterCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
+	CharacterCarriedWeaponMap.Emplace(InWeaponTag, InWeapon);
 
-	if (bResisterAsEquippedWeapon) { CurrentEquippedWeaponTag = InWeaponTagToRegister; }
+	if (bResisterAsEquippedWeapon) { CurrentEquippedWeaponTag = InWeaponTag; }
 }
 
-AWWeaponBase* UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const
+AWWeaponBase* UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTag) const
 {
-	if (CharacterCarriedWeaponMap.Contains(InWeaponTagToGet))
+	if (CharacterCarriedWeaponMap.Contains(InWeaponTag))
 	{
-		if (AWWeaponBase* const* FoundWeapon = CharacterCarriedWeaponMap.Find(InWeaponTagToGet)) { return *FoundWeapon; }
+		if (auto FoundWeapon = CharacterCarriedWeaponMap.Find(InWeaponTag)) { return *FoundWeapon; }
 	}
 	return nullptr;
-
 }
 
 AWWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() const

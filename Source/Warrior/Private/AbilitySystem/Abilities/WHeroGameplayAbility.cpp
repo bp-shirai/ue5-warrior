@@ -2,12 +2,13 @@
 
 #include "AbilitySystem/Abilities/WHeroGameplayAbility.h"
 #include "Characters/WHeroCharacter.h"
-#include "Controllers/WHeroController.h"
 #include "Components/Combat/HeroCombatComponent.h"
+#include "Controllers/WHeroController.h"
 
 AWHeroCharacter* UWHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 {
-	if (!CachedHeroCharacter.IsValid() && CurrentActorInfo)
+	ensure(CurrentActorInfo);
+	if (!CachedHeroCharacter.IsValid())
 	{
 		// Cached pointer
 		CachedHeroCharacter = Cast<AWHeroCharacter>(CurrentActorInfo->AvatarActor);
@@ -17,17 +18,14 @@ AWHeroCharacter* UWHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 
 AWHeroController* UWHeroGameplayAbility::GetHeroControllerFromActorInfo()
 {
-	if (!CachedHeroController.IsValid() && CurrentActorInfo)
-	{
-		//
-		CachedHeroController = Cast<AWHeroController>(CurrentActorInfo->PlayerController);
-	}
+	ensure(CurrentActorInfo);
+	if (!CachedHeroController.IsValid()) { CachedHeroController = Cast<AWHeroController>(CurrentActorInfo->PlayerController); }
 	return CachedHeroController.IsValid() ? CachedHeroController.Get() : nullptr;
 }
 
 UHeroCombatComponent* UWHeroGameplayAbility::GetHeroCombatComponentFromActorInfo()
 {
-    AWHeroCharacter* HeroCharacter =  GetHeroCharacterFromActorInfo();
+	AWHeroCharacter* HeroCharacter = GetHeroCharacterFromActorInfo();
 
-    return HeroCharacter ? HeroCharacter->GetHeroCombatComponent() : nullptr;
+	return HeroCharacter ? HeroCharacter->GetHeroCombatComponent() : nullptr;
 }
