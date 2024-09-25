@@ -42,7 +42,6 @@ void UWAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(UPARAM(ref) TAr
 	{
 		if (SpecHandle.IsValid())
 		{
-			//
 			ClearAbility(SpecHandle);
 		}
 	}

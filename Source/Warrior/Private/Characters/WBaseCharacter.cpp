@@ -29,4 +29,12 @@ void AWBaseCharacter::PossessedBy(AController* NewController)
 	}
 }
 
-UAbilitySystemComponent* AWBaseCharacter::GetAbilitySystemComponent() const { return GetWAbilitySystemComponent(); }
+UAbilitySystemComponent* AWBaseCharacter::GetAbilitySystemComponent() const 
+{ 
+	return GetWAbilitySystemComponent(); 
+}
+
+UPawnCombatComponent* AWBaseCharacter::GetPawnCombatComponent() const
+{
+	return nullptr;
+}

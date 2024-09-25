@@ -9,6 +9,14 @@
 
 class AWWeaponBase;
 
+UENUM(BlueprintType)
+enum class EToggleDamageType : uint8
+{
+	CurrentEquippedWeapon,
+	LeftHand,
+	RightHand,
+};
+
 /**
  *
  */
@@ -29,6 +37,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	AWWeaponBase* GetCharacterCurrentEquippedWeapon() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType = EToggleDamageType::CurrentEquippedWeapon);
+
+	virtual void OnHitTargetActor(AActor* HitActor);
+
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Warrior|Combat")
+	bool bShowDebug;
+
+protected:
+	TArray<AActor*> OverlappedActors;
+
 
 private:
 	TMap<FGameplayTag, TObjectPtr<AWWeaponBase>> CharacterCarriedWeaponMap;

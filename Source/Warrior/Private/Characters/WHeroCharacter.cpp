@@ -118,3 +118,8 @@ void AWHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
 	if (!ensure(WAbilitySystemComponent)) return;
 	WAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
 }
+
+UPawnCombatComponent* AWHeroCharacter::GetPawnCombatComponent() const
+{
+	return HeroCombatComponent;
+}

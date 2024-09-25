@@ -3,6 +3,7 @@
 #include "AbilitySystem/Abilities/WGameplayAbility.h"
 #include "AbilitySystem/WAbilitySystemComponent.h"
 #include "Components/Combat/PawnCombatComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 void UWGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -10,7 +11,10 @@ void UWGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo
 
 	if (AbilityActivationPolicy == EWAbilityActivationPolicy::OnGiven)
 	{
-		if (ActorInfo && !Spec.IsActive()) { ActorInfo->AbilitySystemComponent->TryActivateAbility(Spec.Handle); }
+		if (ActorInfo && !Spec.IsActive())
+		{
+			ActorInfo->AbilitySystemComponent->TryActivateAbility(Spec.Handle);
+		}
 	}
 }
 
@@ -20,7 +24,10 @@ void UWGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	if (AbilityActivationPolicy == EWAbilityActivationPolicy::OnGiven)
 	{
-		if (ActorInfo) { ActorInfo->AbilitySystemComponent->ClearAbility(Handle); }
+		if (ActorInfo)
+		{
+			ActorInfo->AbilitySystemComponent->ClearAbility(Handle);
+		}
 	}
 }
 
@@ -37,4 +44,23 @@ UWAbilitySystemComponent* UWGameplayAbility::GetWAbilitySystemComponentFromActor
 	ensure(AbilitySystemComponent);
 
 	return Cast<UWAbilitySystemComponent>(AbilitySystemComponent);
+}
+
+FActiveGameplayEffectHandle UWGameplayAbility::NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+{
+	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+	check(SourceASC && TargetASC && InSpecHandle.IsValid());
+
+	return SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
+}
+
+FActiveGameplayEffectHandle UWGameplayAbility::BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle, EWSuccessType& OutSuccessType)
+{
+	FActiveGameplayEffectHandle ActiveGameplayEffectHandle = NativeApplyEffectSpecHandleToTarget(TargetActor, InSpecHandle);
+
+	OutSuccessType = ActiveGameplayEffectHandle.WasSuccessfullyApplied() ? EWSuccessType::Successful : EWSuccessType::Failed;
+	
+	return ActiveGameplayEffectHandle;
 }

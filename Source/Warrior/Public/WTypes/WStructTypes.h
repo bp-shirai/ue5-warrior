@@ -3,12 +3,12 @@
 #pragma once
 
 #include "GameplayTagContainer.h"
+#include "ScalableFloat.h"
 #include "WStructTypes.generated.h"
 
 class UWHeroLinkedAnimLayer;
 class UWGameplayAbility;
 class UInputMappingContext;
-
 
 USTRUCT(BlueprintType)
 struct FWHeroAbilitySet
@@ -22,9 +22,7 @@ struct FWHeroAbilitySet
 	TSubclassOf<UWGameplayAbility> AbilityToGrant;
 
 	bool IsValid() const; //{ return InputTag.IsValid() && AbilityToGrant; }
-	
 };
-
 
 USTRUCT(BlueprintType)
 struct FWHeroWeaponData
@@ -37,7 +35,9 @@ struct FWHeroWeaponData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputMappingContext> WeaponInputMappingContext;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta =(TitleProperty="InputTag"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
 	TArray<FWHeroAbilitySet> DefaultWeaponAbilities;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat WeaponBaseDamage;
 };
