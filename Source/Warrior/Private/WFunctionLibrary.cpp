@@ -16,14 +16,20 @@ void UWFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTa
 {
 	UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
 
-	if (!ASC->HasMatchingGameplayTag(TagToAdd)) { ASC->AddLooseGameplayTag(TagToAdd); }
+	if (!ASC->HasMatchingGameplayTag(TagToAdd))
+	{
+		ASC->AddLooseGameplayTag(TagToAdd);
+	}
 }
 
 void UWFunctionLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
 {
 	UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
 
-	if (!ASC->HasMatchingGameplayTag(TagToRemove)) { ASC->RemoveLooseGameplayTag(TagToRemove); }
+	if (!ASC->HasMatchingGameplayTag(TagToRemove))
+	{
+		ASC->RemoveLooseGameplayTag(TagToRemove);
+	}
 }
 
 bool UWFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)

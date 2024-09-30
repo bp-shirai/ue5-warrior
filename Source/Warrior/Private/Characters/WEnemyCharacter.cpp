@@ -2,9 +2,12 @@
 
 #include "Characters/WEnemyCharacter.h"
 #include "Components/Combat/EnemyCombatComponent.h"
+#include "Components/UI/EnemyUIComponent.h"
+#include "Components/WidgetComponent.h"
 #include "DataAssets/StartUpData/DataAsset_EnemyStartUp.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Widgets/WUserWidgetBase.h"
 
 #include "WDebugHelper.h"
 
@@ -23,7 +26,23 @@ AWEnemyCharacter::AWEnemyCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking	  = 1000.f;
 
 	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
+
+	EnemyUIComponent = CreateDefaultSubobject<UEnemyUIComponent>("EnemyUIComponent");
+
+	EnemyHealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("EnemyHealthWidgetComponent");
+	EnemyHealthWidgetComponent->SetupAttachment(GetMesh());
 }
+
+void AWEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (UWUserWidgetBase* HealthWidget = Cast<UWUserWidgetBase>(EnemyHealthWidgetComponent->GetUserWidgetObject()))
+	{
+		HealthWidget->InitEnemyCreatedWidget(this);
+	}
+}
+
 void AWEnemyCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -41,7 +60,7 @@ void AWEnemyCharacter::InitEnemyStartUpData()
 			if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
 			{
 				LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent);
-				//Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
+				// Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
 			}
 		}));
 }
@@ -49,4 +68,9 @@ void AWEnemyCharacter::InitEnemyStartUpData()
 UPawnCombatComponent* AWEnemyCharacter::GetPawnCombatComponent() const
 {
 	return EnemyCombatComponent;
+}
+
+UPawnUIComponent* AWEnemyCharacter::GetPawnUIComponent() const
+{
+	return EnemyUIComponent;
 }

@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/Combat/HeroCombatComponent.h"
 #include "Components/Input/WInputComponent.h"
+#include "Components/UI/HeroUIComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "DataAssets/StartUpData/DataAsset_HeroStartUpData.h"
 #include "EnhancedInputSubsystems.h"
@@ -40,6 +41,9 @@ AWHeroCharacter::AWHeroCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
 	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComponent");
+
+	HeroUIComponent = CreateDefaultSubobject<UHeroUIComponent>("HeroUIComponent");
+
 }
 
 void AWHeroCharacter::PossessedBy(AController* NewController)
@@ -123,3 +127,13 @@ UPawnCombatComponent* AWHeroCharacter::GetPawnCombatComponent() const
 {
 	return HeroCombatComponent;
 }
+
+UPawnUIComponent* AWHeroCharacter::GetPawnUIComponent() const
+{
+	return HeroUIComponent;
+}
+
+// UHeroUIComponent* AWHeroCharacter::GetHeroUIComponent() const
+// {
+// 	return HeroUIComponent;
+// }

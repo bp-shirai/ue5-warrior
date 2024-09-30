@@ -38,3 +38,8 @@ UPawnCombatComponent* AWBaseCharacter::GetPawnCombatComponent() const
 {
 	return nullptr;
 }
+
+UPawnUIComponent* AWBaseCharacter::GetPawnUIComponent() const
+{
+	return nullptr;
+}

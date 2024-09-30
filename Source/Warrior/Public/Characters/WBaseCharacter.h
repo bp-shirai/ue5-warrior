@@ -3,7 +3,10 @@
 #pragma once
 
 #include "AbilitySystemInterface.h"
+
 #include "Interfaces/PawnCombatInterface.h"
+#include "Interfaces/PawnUIInterface.h"
+
 #include "GameFramework/Character.h"
 #include "WBaseCharacter.generated.h"
 
@@ -12,7 +15,7 @@ class UWAttributeSet;
 class UDataAsset_StartUpDataBase;
 
 UCLASS(Abstract)
-class WARRIOR_API AWBaseCharacter : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface
+class WARRIOR_API AWBaseCharacter : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface, public IPawnUIInterface
 {
 	GENERATED_BODY()
 
@@ -20,12 +23,16 @@ public:
 	AWBaseCharacter();
 
 	//~ Begin IAbilitySystemInterface Interface.
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const;
-	//~ End IAbilitySystemInterface Interface.
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~ End IAbilitySystemInterface Interface
 
 	//~ Begin IPawnCombatInterface Interface.
-	virtual UPawnCombatComponent* GetPawnCombatComponent() const;
-	//~ End IPawnCombatInterface Interface.
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+	//~ End IPawnCombatInterface Interface
+
+	//~ Begin IPawnUIInterface Interface.
+	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+	//~ End IPawnUIInterface Interface
 
 protected:
 	//~ Begin APawn Interface.
