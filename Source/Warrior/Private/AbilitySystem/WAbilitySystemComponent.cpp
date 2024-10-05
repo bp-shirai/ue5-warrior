@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AbilitySystem/WAbilitySystemComponent.h"
-#include "AbilitySystem/Abilities/WGameplayAbility.h"
+#include "AbilitySystem/Abilities/WHeroGameplayAbility.h"
 
 void UWAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InInputTag)
 {
@@ -34,11 +34,11 @@ void UWAbilitySystemComponent::GrantHeroWeaponAbilities(const TArray<FWHeroAbili
 	}
 }
 
-void UWAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(UPARAM(ref) TArray<FGameplayAbilitySpecHandle>& InSpecHandlesToRemove) 
+void UWAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(UPARAM(ref) TArray<FGameplayAbilitySpecHandle>& InSpecHandlesToRemove)
 {
 	if (InSpecHandlesToRemove.IsEmpty()) return;
 
-	for(const FGameplayAbilitySpecHandle& SpecHandle: InSpecHandlesToRemove)
+	for (const FGameplayAbilitySpecHandle& SpecHandle : InSpecHandlesToRemove)
 	{
 		if (SpecHandle.IsValid())
 		{
@@ -47,4 +47,27 @@ void UWAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(UPARAM(ref) TAr
 	}
 
 	InSpecHandlesToRemove.Empty();
+}
+
+bool UWAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate)
+{
+	check(AbilityTagToActivate.IsValid());
+
+	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
+	GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagToActivate.GetSingleTagContainer(), FoundAbilitySpecs);
+
+	if (!FoundAbilitySpecs.IsEmpty())
+	{
+		const int32 RandomAbilityIndex		 = FMath::RandRange(0, FoundAbilitySpecs.Num() - 1);
+		FGameplayAbilitySpec* SpecToActivate = FoundAbilitySpecs[RandomAbilityIndex];
+
+		check(SpecToActivate);
+
+		if (!SpecToActivate->IsActive())
+		{
+			return TryActivateAbility(SpecToActivate->Handle);
+		}
+	}
+
+	return false;
 }

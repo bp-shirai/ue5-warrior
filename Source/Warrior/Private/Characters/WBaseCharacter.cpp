@@ -3,6 +3,8 @@
 #include "Characters/WBaseCharacter.h"
 #include "AbilitySystem/WAbilitySystemComponent.h"
 #include "AbilitySystem/WAttributeSet.h"
+#include "Components/CapsuleComponent.h"
+#include "MotionWarpingComponent.h"
 
 // Sets default values
 AWBaseCharacter::AWBaseCharacter()
@@ -12,9 +14,14 @@ AWBaseCharacter::AWBaseCharacter()
 
 	GetMesh()->bReceivesDecals = false;
 
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	
+
 	WAbilitySystemComponent = CreateDefaultSubobject<UWAbilitySystemComponent>("WAbilitySystemComponent");
 
 	WAttributeSet = CreateDefaultSubobject<UWAttributeSet>("WAttributeSet");
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarpingComponent");
 }
 
 void AWBaseCharacter::PossessedBy(AController* NewController)

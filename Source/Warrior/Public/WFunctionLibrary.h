@@ -19,7 +19,7 @@ class WARRIOR_API UWFunctionLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	static UWAbilitySystemComponent* NativeGetWarriorASCFromActor(AActor* InActor);
+	static UWAbilitySystemComponent* NativeGetWarriorASCFromActor(const AActor* InActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
 	static void AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd);
@@ -27,13 +27,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
 	static void RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove);
 
-	static bool NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck);
+	static bool NativeDoesActorHaveTag(const AActor* InActor, FGameplayTag TagToCheck);
 
 	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary", meta = (DisplayName = "Dose Actor Have Tag", ExpandEnumAsExecs = "OutConfirmType"))
-	static void BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EWConfirmType& OutConfirmType);
+	static void BP_DoesActorHaveTag(const AActor* InActor, FGameplayTag TagToCheck, EWConfirmType& OutConfirmType);
 
-	static UPawnCombatComponent* NativeGetPawnCombatComponent(AActor* InActor);
+	static UPawnCombatComponent* NativeGetPawnCombatComponent(const AActor* InActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary", meta = (DisplayName = "Get Pawn Combat Component", ExpandEnumAsExecs = "OutValidType"))
-	static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(AActor* InActor, EWValidType& OutValidType);
+	static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(const AActor* InActor, EWValidType& OutValidType);
+
+	UFUNCTION(BlueprintPure, Category = "Warrior|FunctionLibrary")
+	static bool IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn);
+
+	static FVector GetForwardVector(const AActor* Actor);
 };

@@ -20,11 +20,12 @@ AWAIController::AWAIController(const FObjectInitializer& ObjectInitializer)
 	AISenseConfig_Sight->LoseSightRadius						  = 0.f;
 	AISenseConfig_Sight->PeripheralVisionAngleDegrees			  = 360.f;
 
-	EnemyPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("EnemyPerceptionComponent");
-	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
-	EnemyPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
-	EnemyPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnEnemyPerceptionUpdated);
+	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("EnemyPerceptionComponent");
+	PerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
+	PerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
+	PerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnEnemyPerceptionUpdated);
 
+	
 	SetGenericTeamId(FGenericTeamId(1));
 }
 
@@ -34,7 +35,7 @@ ETeamAttitude::Type AWAIController::GetTeamAttitudeTowards(const AActor& Other) 
 
 	const IGenericTeamAgentInterface* OtherTeamArgent = Cast<const IGenericTeamAgentInterface>(PawnToCheck->GetController());
 
-	if (OtherTeamArgent && OtherTeamArgent->GetGenericTeamId() != GetGenericTeamId())
+	if (OtherTeamArgent && OtherTeamArgent->GetGenericTeamId() < GetGenericTeamId())
 	{
 		return ETeamAttitude::Hostile;
 	}
@@ -57,16 +58,23 @@ void AWAIController::BeginPlay()
 		case 3: CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::Good); break;
 		case 4: CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); break;
 		}
+
+		CrowdComp->SetAvoidanceGroup(1);
+		CrowdComp->SetGroupsToAvoid(1);
+		CrowdComp->SetCrowdCollisionQueryRange(CollisionQueryRange);
 	}
 }
 
 void AWAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (Stimulus.WasSuccessfullySensed() && Actor)
+	if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
 	{
-		if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+		if (!BlackboardComponent->GetValueAsObject("TargetActor"))
 		{
-			BlackboardComponent->SetValueAsObject("TargetActor", Actor);
+			if (Stimulus.WasSuccessfullySensed() && Actor)
+			{
+				BlackboardComponent->SetValueAsObject("TargetActor", Actor);
+			}
 		}
 	}
 }

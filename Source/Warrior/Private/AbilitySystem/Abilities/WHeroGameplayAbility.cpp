@@ -36,6 +36,7 @@ UHeroCombatComponent* UWHeroGameplayAbility::GetHeroCombatComponentFromActorInfo
 FGameplayEffectSpecHandle UWHeroGameplayAbility::MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount)
 {
 	check(EffectClass);
+	
 	UWAbilitySystemComponent* ASC = GetWAbilitySystemComponentFromActorInfo();
 	AActor* AvatarActor			  = GetAvatarActorFromActorInfo();
 

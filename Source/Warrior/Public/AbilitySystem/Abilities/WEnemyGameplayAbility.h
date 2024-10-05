@@ -6,25 +6,27 @@
 #include "AbilitySystem/Abilities/WGameplayAbility.h"
 #include "WEnemyGameplayAbility.generated.h"
 
-
 class AWEnemyCharacter;
 class UEnemyCombatComponent;
 
 /**
- * 
+ *
  */
 UCLASS()
 class WARRIOR_API UWEnemyGameplayAbility : public UWGameplayAbility
 {
 	GENERATED_BODY()
-	
-public:
-	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
-	AWEnemyCharacter* GetEnemyCharacterFromActorInfo();
 
-	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
-	UEnemyCombatComponent* GetEnemyCombatComponentFromActorInfo();
+public:
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	AWEnemyCharacter* GetEnemyCharacterFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UEnemyCombatComponent* GetEnemyCombatComponentFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat) const;
 
 private:
-	TWeakObjectPtr<AWEnemyCharacter> CachedEnemyCharacter;
+	// TWeakObjectPtr<AWEnemyCharacter> CachedEnemyCharacter;
 };

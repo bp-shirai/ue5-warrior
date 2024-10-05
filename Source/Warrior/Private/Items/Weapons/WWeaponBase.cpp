@@ -2,6 +2,7 @@
 
 #include "Items/Weapons/WWeaponBase.h"
 #include "Components/BoxComponent.h"
+#include "WFunctionLibrary.h"
 
 #include "WDebugHelper.h"
 
@@ -26,15 +27,13 @@ void AWWeaponBase::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedCom
 
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the owning pawn for the weapon: %s"), *GetName());
 
+	// TODO : Implement hit check for enemy characters
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UWFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
-			//Debug::Print(GetName() + TEXT(" Begin overlap with ") + HitPawn->GetName());
 			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
-
-		// TODO : Implement hit check for enemy characters
 	}
 }
 
@@ -44,14 +43,12 @@ void AWWeaponBase::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedCompo
 
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the owning pawn for the weapon: %s"), *GetName());
 
+	// TODO : Implement hit check for enemy characters
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UWFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
-			//Debug::Print(GetName() + TEXT(" end overlap with ") + HitPawn->GetName());
 			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
-
-		// TODO : Implement hit check for enemy characters
 	}
 }

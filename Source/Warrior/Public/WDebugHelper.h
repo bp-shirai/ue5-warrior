@@ -2,6 +2,10 @@
 
 #include "CoreMinimal.h"
 
+#define CheckNull(x) { if (x == nullptr) return; }
+#define CheckNullResult(x, y) { if (x == nullptr) return y; }
+
+
 namespace Debug
 {
 	static void Print(const FString& Msg, const FColor& Color = FColor::MakeRandomColor(), int32 InKey = -1)

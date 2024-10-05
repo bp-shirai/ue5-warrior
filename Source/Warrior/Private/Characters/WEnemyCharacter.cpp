@@ -16,7 +16,7 @@ AWEnemyCharacter::AWEnemyCharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationRoll	= false;
+	bUseControllerRotationYaw	= false;
 	bUseControllerRotationRoll	= false;
 
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;

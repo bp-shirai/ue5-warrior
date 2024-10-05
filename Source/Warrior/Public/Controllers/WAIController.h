@@ -9,8 +9,6 @@
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 
-#define TeamId_Enemy = 1;
-
 /**
  *
  */
@@ -29,8 +27,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UAIPerceptionComponent> EnemyPerceptionComponent;
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	// TObjectPtr<UAIPerceptionComponent> EnemyPerceptionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
@@ -44,4 +42,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidance Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
 	int32 DetourCrowdAvoidanceQuality = 4;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidance Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
+	float CollisionQueryRange = 600.f;
 };
