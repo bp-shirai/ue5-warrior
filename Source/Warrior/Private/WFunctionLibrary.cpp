@@ -6,10 +6,14 @@
 #include "AbilitySystemGlobals.h"
 #include "Interfaces/PawnCombatInterface.h"
 #include "Controllers/WHeroController.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "WGameplayTags.h"
+
+#include "WDebugHelper.h"
 
 UWAbilitySystemComponent* UWFunctionLibrary::NativeGetWarriorASCFromActor(const AActor* InActor)
 {
-	check(InActor);
+	ensure(InActor);
 
 	// return CastChecked<UWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
 	return CastChecked<UWAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InActor));
@@ -17,6 +21,8 @@ UWAbilitySystemComponent* UWFunctionLibrary::NativeGetWarriorASCFromActor(const 
 
 void UWFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd)
 {
+	if (!ensure(InActor)) return;
+
 	UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
 
 	if (ASC->HasMatchingGameplayTag(TagToAdd) == false)
@@ -27,6 +33,8 @@ void UWFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTa
 
 void UWFunctionLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
 {
+	if (!ensure(InActor)) return;
+
 	UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
 
 	if (ASC->HasMatchingGameplayTag(TagToRemove))
@@ -44,12 +52,17 @@ bool UWFunctionLibrary::NativeDoesActorHaveTag(const AActor* InActor, FGameplayT
 
 void UWFunctionLibrary::BP_DoesActorHaveTag(const AActor* InActor, FGameplayTag TagToCheck, EWConfirmType& OutConfirmType)
 {
+	if (!ensure(InActor))
+	{
+		OutConfirmType = EWConfirmType::No;
+		return;
+	}
 	OutConfirmType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EWConfirmType::Yes : EWConfirmType::No;
 }
 
 UPawnCombatComponent* UWFunctionLibrary::NativeGetPawnCombatComponent(const AActor* InActor)
 {
-	check(InActor);
+	ensure(InActor);
 
 	if (const IPawnCombatInterface* PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
 	{
@@ -68,9 +81,10 @@ UPawnCombatComponent* UWFunctionLibrary::BP_GetPawnCombatComponentFromActor(cons
 	return CombatComponent;
 }
 
+
 bool UWFunctionLibrary::IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn)
 {
-	check(QueryPawn && TargetPawn);
+	if (!ensure(QueryPawn && TargetPawn)) return false;
 
 	const IGenericTeamAgentInterface* QueryTramAgent  = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
 	const IGenericTeamAgentInterface* TargetTramAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
@@ -83,10 +97,52 @@ bool UWFunctionLibrary::IsTargetPawnHostile(const APawn* QueryPawn, const APawn*
 	return false;
 }
 
+float UWFunctionLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat, float InLevel)
+{
+	return InScalableFloat.GetValueAtLevel(InLevel);
+}
+
+FGameplayTag UWFunctionLibrary::ComputeHitReactDirectionTag(const AActor* InAttacker, const AActor* InVictim, float& OutAngleDifference)
+{
+	if (!ensure(InAttacker && InVictim)) return FGameplayTag::EmptyTag;
+
+	const FVector VictimForward				= InVictim->GetActorForwardVector();
+	const FVector VictimToAttackerNormalize = (InAttacker->GetActorLocation() - InVictim->GetActorLocation()).GetSafeNormal();
+
+	const float DotResult = FVector::DotProduct(VictimForward, VictimToAttackerNormalize);
+	OutAngleDifference	  = UKismetMathLibrary::DegAcos(DotResult);
+
+	const FVector CrossResult = FVector::CrossProduct(VictimForward, VictimToAttackerNormalize);
+
+	if (CrossResult.Z < 0.f)
+	{
+		OutAngleDifference *= -1.f;
+	}
+
+	if (OutAngleDifference >= -45.f && OutAngleDifference <= 45.f) { return WTags::Shared_Status_HitReact_Front; }
+	else if (OutAngleDifference < -45.f && OutAngleDifference >= -135.f) { return WTags::Shared_Status_HitReact_Left; }
+	else if (OutAngleDifference < -135.f || OutAngleDifference > 135.f) { return WTags::Shared_Status_HitReact_Back; }
+	else if (OutAngleDifference > 45.f && OutAngleDifference <= 135.f) { return WTags::Shared_Status_HitReact_Right; }
+
+	return WTags::Shared_Status_HitReact_Front;
+}
+
+bool UWFunctionLibrary::IsValidBlock(const AActor* InAttacker, const AActor* InDefender)
+{
+	if (!ensure(InAttacker && InDefender)) return false;
+
+	const float DotResult = FVector::DotProduct(InAttacker->GetActorForwardVector(), InDefender->GetActorForwardVector());
+
+	// const FString DebugString = FString::Printf(TEXT("Dot Result: %f %s"), DotResult, DotResult < -0.1f ? TEXT("Valid Block") : TEXT("Invalid Block"));
+	// Debug::Print(DebugString, DotResult < -0.1f ? FColor::Green : FColor::Red);
+
+	return DotResult < -0.1f;
+}
+
 FVector UWFunctionLibrary::GetForwardVector(const AActor* Actor)
 {
 	const FRotator BaseRotation = Actor->GetActorRotation();
-	const FMatrix RotMatrix = FRotationMatrix(BaseRotation);
+	const FMatrix RotMatrix		= FRotationMatrix(BaseRotation);
 	const FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
 
 	return ForwardVector;

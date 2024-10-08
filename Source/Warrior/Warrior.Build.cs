@@ -24,6 +24,12 @@ public class Warrior : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
+		if (Target.bBuildEditor)
+		{
+    		// Valid only when in editor mode
+    		PublicDependencyModuleNames.AddRange(new string[] { "UnrealEd" });
+		}
+
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 

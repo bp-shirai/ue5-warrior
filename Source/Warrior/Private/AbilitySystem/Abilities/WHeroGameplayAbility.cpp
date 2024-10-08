@@ -22,7 +22,10 @@ AWHeroCharacter* UWHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 AWHeroController* UWHeroGameplayAbility::GetHeroControllerFromActorInfo()
 {
 	ensure(CurrentActorInfo);
-	if (!CachedHeroController.IsValid()) { CachedHeroController = Cast<AWHeroController>(CurrentActorInfo->PlayerController); }
+	if (!CachedHeroController.IsValid())
+	{
+		CachedHeroController = Cast<AWHeroController>(CurrentActorInfo->PlayerController);
+	}
 	return CachedHeroController.IsValid() ? CachedHeroController.Get() : nullptr;
 }
 
@@ -36,7 +39,7 @@ UHeroCombatComponent* UWHeroGameplayAbility::GetHeroCombatComponentFromActorInfo
 FGameplayEffectSpecHandle UWHeroGameplayAbility::MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount)
 {
 	check(EffectClass);
-	
+
 	UWAbilitySystemComponent* ASC = GetWAbilitySystemComponentFromActorInfo();
 	AActor* AvatarActor			  = GetAvatarActorFromActorInfo();
 

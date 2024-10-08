@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/WAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/WHeroGameplayAbility.h"
+#include "WGameplayTags.h"
 
 void UWAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InInputTag)
 {
@@ -9,13 +10,25 @@ void UWAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InInput
 
 	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		if (!AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag)) continue;
-
-		TryActivateAbility(AbilitySpec.Handle);
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag))
+		{
+			TryActivateAbility(AbilitySpec.Handle);
+		}
 	}
 }
 
-void UWAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InInputTag) {}
+void UWAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InInputTag)
+{
+	if (!InInputTag.IsValid() || !InInputTag.MatchesTag(WTags::Input_MustBeHeld)) return;
+
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag) && AbilitySpec.IsActive())
+		{
+			CancelAbilityHandle(AbilitySpec.Handle);
+		}
+	}
+}
 
 void UWAbilitySystemComponent::GrantHeroWeaponAbilities(const TArray<FWHeroAbilitySet>& InDefaultWeaponAbilities, int32 ApplyLevel, TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles)
 {

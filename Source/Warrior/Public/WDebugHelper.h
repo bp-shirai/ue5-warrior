@@ -2,9 +2,29 @@
 
 #include "CoreMinimal.h"
 
-#define CheckNull(x) { if (x == nullptr) return; }
-#define CheckNullResult(x, y) { if (x == nullptr) return y; }
+// エディタ時のみ有効にする
+#if WITH_EDITOR
+#include "UnrealEdGlobals.h"
+#include "Editor/UnrealEdEngine.h"
+#endif
 
+// #define CheckNull(x) { if (x == nullptr) return; }
+// #define CheckNullResult(x, y) { if (x == nullptr) return y; }
+
+// #if WITH_EDITOR
+// // エディタ時のみ有効にする
+// #define CheckNull(expression) \
+// 	if ( !ensureMsg(expression, message) ) { \
+// 	if(GUnrealEd->PlayWorld && !GUnrealEd->PlayWorld->bDebugPauseExecution) \
+// 	{ \
+//     	GUnrealEd->PlayWorld->bDebugPauseExecution = true; \
+//     	GUnrealEd->PlaySessionPaused(); \
+// 	} }\
+
+// #else
+// // それ以外のときはcheckマクロで止める
+// check(false);
+// #endif
 
 namespace Debug
 {
