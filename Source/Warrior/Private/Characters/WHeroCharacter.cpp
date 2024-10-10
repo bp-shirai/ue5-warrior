@@ -15,6 +15,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "WGameplayTags.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+
 #include "WDebugHelper.h"
 
 AWHeroCharacter::AWHeroCharacter()
@@ -77,6 +79,10 @@ void AWHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
 
+	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_SwitchTarget, ETriggerEvent::Triggered, this, &ThisClass::Input_SwitchTargetTriggered);
+	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_SwitchTarget, ETriggerEvent::Completed, this, &ThisClass::Input_SwitchTargetCompleted);
+
+
 	WInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 }
 
@@ -122,6 +128,20 @@ void AWHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
 	if (!ensure(WAbilitySystemComponent)) return;
 	WAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
 }
+
+void AWHeroCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue)
+{
+	SwitchDirection = InputActionValue.Get<FVector2D>();
+
+}
+
+void AWHeroCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Data;
+	FGameplayTag EventTag = SwitchDirection.X > 0.f ? WTags::Player_Event_SwitchTarget_Right : WTags::Player_Event_SwitchTarget_Left;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, EventTag, Data);
+}
+
 
 UPawnCombatComponent* AWHeroCharacter::GetPawnCombatComponent() const
 {

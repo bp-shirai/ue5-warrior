@@ -5,9 +5,9 @@
 
 bool UWBaseAnimInstance::DoesOwningHaveTag(FGameplayTag TagToCheck) const
 {
-	if (APawn* OwningPawn = TryGetPawnOwner())
+	if (const APawn* OwningPawn = TryGetPawnOwner())
 	{
-        return UWFunctionLibrary::NativeDoesActorHaveTag(OwningPawn, TagToCheck);
+        return UWFunctionLibrary::DoesActorHaveTag(OwningPawn, TagToCheck);
 	}
 
 	return false;

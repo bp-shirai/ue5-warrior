@@ -8,23 +8,30 @@
 #include "Editor/UnrealEdEngine.h"
 #endif
 
-// #define CheckNull(x) { if (x == nullptr) return; }
-// #define CheckNullResult(x, y) { if (x == nullptr) return y; }
+#define CheckNull(x)              \
+	{                             \
+		if (x == nullptr) return; \
+	}
+#define CheckNullResult(x, y)       \
+	{                               \
+		if (x == nullptr) return y; \
+	}
 
-// #if WITH_EDITOR
-// // エディタ時のみ有効にする
-// #define CheckNull(expression) \
-// 	if ( !ensureMsg(expression, message) ) { \
-// 	if(GUnrealEd->PlayWorld && !GUnrealEd->PlayWorld->bDebugPauseExecution) \
-// 	{ \
-//     	GUnrealEd->PlayWorld->bDebugPauseExecution = true; \
-//     	GUnrealEd->PlaySessionPaused(); \
-// 	} }\
-
-// #else
-// // それ以外のときはcheckマクロで止める
-// check(false);
-// #endif
+#if WITH_EDITOR
+// エディタ時のみ有効にする
+#define CheckEd(expression)                                           \
+	{                                                          \
+		if (!expression)                                              \
+		{                                                      \
+			ensure(expression);                                       \
+			GUnrealEd->PlayWorld->bDebugPauseExecution = true; \
+			GUnrealEd->PlaySessionPaused();                    \
+		}                                                      \
+	}
+#else
+// それ以外のときはcheckマクロで止める
+#define CheckEd(expression) check(expression);
+#endif
 
 namespace Debug
 {

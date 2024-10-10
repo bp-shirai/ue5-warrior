@@ -11,21 +11,17 @@
 
 #include "WDebugHelper.h"
 
-UWAbilitySystemComponent* UWFunctionLibrary::NativeGetWarriorASCFromActor(const AActor* InActor)
+UWAbilitySystemComponent* UWFunctionLibrary::GetWarriorASCFromActor(const AActor* InActor)
 {
-	ensure(InActor);
-
-	// return CastChecked<UWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
-	return CastChecked<UWAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InActor));
+	return Cast<UWAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InActor));
 }
 
 void UWFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd)
 {
-	if (!ensure(InActor)) return;
+	UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InActor);
+	ensure(ASC);
 
-	UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
-
-	if (ASC->HasMatchingGameplayTag(TagToAdd) == false)
+	if (ASC && ASC->HasMatchingGameplayTag(TagToAdd) == false)
 	{
 		ASC->AddLooseGameplayTag(TagToAdd);
 	}
@@ -33,21 +29,21 @@ void UWFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTa
 
 void UWFunctionLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
 {
-	if (!ensure(InActor)) return;
+	UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InActor);
+	ensure(ASC);
 
-	UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
-
-	if (ASC->HasMatchingGameplayTag(TagToRemove))
+	if (ASC && ASC->HasMatchingGameplayTag(TagToRemove))
 	{
 		ASC->RemoveLooseGameplayTag(TagToRemove);
 	}
 }
 
-bool UWFunctionLibrary::NativeDoesActorHaveTag(const AActor* InActor, FGameplayTag TagToCheck)
+bool UWFunctionLibrary::DoesActorHaveTag(const AActor* InActor, FGameplayTag TagToCheck)
 {
-	const UWAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+	const UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InActor);
+	ensure(ASC);
 
-	return ASC->HasMatchingGameplayTag(TagToCheck);
+	return ASC ? ASC->HasMatchingGameplayTag(TagToCheck) : false;
 }
 
 void UWFunctionLibrary::BP_DoesActorHaveTag(const AActor* InActor, FGameplayTag TagToCheck, EWConfirmType& OutConfirmType)
@@ -57,10 +53,10 @@ void UWFunctionLibrary::BP_DoesActorHaveTag(const AActor* InActor, FGameplayTag 
 		OutConfirmType = EWConfirmType::No;
 		return;
 	}
-	OutConfirmType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EWConfirmType::Yes : EWConfirmType::No;
+	OutConfirmType = DoesActorHaveTag(InActor, TagToCheck) ? EWConfirmType::Yes : EWConfirmType::No;
 }
 
-UPawnCombatComponent* UWFunctionLibrary::NativeGetPawnCombatComponent(const AActor* InActor)
+UPawnCombatComponent* UWFunctionLibrary::GetPawnCombatComponent(const AActor* InActor)
 {
 	ensure(InActor);
 
@@ -74,13 +70,12 @@ UPawnCombatComponent* UWFunctionLibrary::NativeGetPawnCombatComponent(const AAct
 
 UPawnCombatComponent* UWFunctionLibrary::BP_GetPawnCombatComponentFromActor(const AActor* InActor, EWValidType& OutValidType)
 {
-	UPawnCombatComponent* CombatComponent = NativeGetPawnCombatComponent(InActor);
+	UPawnCombatComponent* CombatComponent = GetPawnCombatComponent(InActor);
 
 	OutValidType = CombatComponent ? EWValidType::Valid : EWValidType::Invalid;
 
 	return CombatComponent;
 }
-
 
 bool UWFunctionLibrary::IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn)
 {
@@ -137,13 +132,4 @@ bool UWFunctionLibrary::IsValidBlock(const AActor* InAttacker, const AActor* InD
 	// Debug::Print(DebugString, DotResult < -0.1f ? FColor::Green : FColor::Red);
 
 	return DotResult < -0.1f;
-}
-
-FVector UWFunctionLibrary::GetForwardVector(const AActor* Actor)
-{
-	const FRotator BaseRotation = Actor->GetActorRotation();
-	const FMatrix RotMatrix		= FRotationMatrix(BaseRotation);
-	const FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
-
-	return ForwardVector;
 }
