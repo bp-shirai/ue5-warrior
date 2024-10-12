@@ -61,7 +61,7 @@ void UWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());
 
 		// TODO: Handle character death
-		if (GetCurrentHealth() == 0.f)
+		if (GetCurrentHealth() <= 0.f)
 		{
 			UWFunctionLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), WTags::Shared_Status_Dead);
 		}

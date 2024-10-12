@@ -15,19 +15,20 @@ public class Warrior : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"GameplayAbilities",
-    		"GameplayTasks",
-    		"GameplayTags",
+			"GameplayTasks",
+			"GameplayTags",
 			"AIModule",
 			"AnimGraphRuntime",
-			"MotionWarping"
+			"MotionWarping",
+			"Niagara",
 			});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		if (Target.bBuildEditor)
 		{
-    		// Valid only when in editor mode
-    		PublicDependencyModuleNames.AddRange(new string[] { "UnrealEd" });
+			// Valid only when in editor mode
+			PublicDependencyModuleNames.AddRange(new string[] { "UnrealEd" });
 		}
 
 		// Uncomment if you are using Slate UI

@@ -133,3 +133,13 @@ bool UWFunctionLibrary::IsValidBlock(const AActor* InAttacker, const AActor* InD
 
 	return DotResult < -0.1f;
 }
+
+bool UWFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+{
+	UAbilitySystemComponent* SourceASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InInstigator);
+	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InTargetActor);
+
+	FActiveGameplayEffectHandle ActiveHandle = SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
+	
+	return ActiveHandle.WasSuccessfullyApplied();
+}

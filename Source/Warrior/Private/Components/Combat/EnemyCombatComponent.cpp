@@ -15,7 +15,7 @@ void UEnemyCombatComponent::OnHitTargetActor(AActor* HitActor)
 	bool bIsValidBlock = false;
 
 	const bool bIsPlayerBlocking	  = UWFunctionLibrary::DoesActorHaveTag(HitActor, WTags::Player_Status_Blocking);
-	const bool bIsMyAttackUnblockable = false;
+	const bool bIsMyAttackUnblockable = UWFunctionLibrary::DoesActorHaveTag(GetOwningPawn(), WTags::Enemy_Status_Unblockable);
 
 	if (bIsPlayerBlocking && !bIsMyAttackUnblockable)
 	{

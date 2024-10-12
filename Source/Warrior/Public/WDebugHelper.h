@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 
-// エディタ時のみ有効にする
 #if WITH_EDITOR
 #include "UnrealEdGlobals.h"
 #include "Editor/UnrealEdEngine.h"
@@ -18,19 +17,20 @@
 	}
 
 #if WITH_EDITOR
-// エディタ時のみ有効にする
-#define CheckEd(expression)                                           \
+
+#define CheckEd(expression)                                    \
 	{                                                          \
-		if (!expression)                                              \
+		if (!expression)                                       \
 		{                                                      \
-			ensure(expression);                                       \
+			ensure(expression);                                \
 			GUnrealEd->PlayWorld->bDebugPauseExecution = true; \
 			GUnrealEd->PlaySessionPaused();                    \
 		}                                                      \
 	}
 #else
-// それ以外のときはcheckマクロで止める
+
 #define CheckEd(expression) check(expression);
+
 #endif
 
 namespace Debug
