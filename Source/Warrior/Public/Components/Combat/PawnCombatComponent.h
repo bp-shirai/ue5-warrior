@@ -49,8 +49,10 @@ public:
 	bool bShowDebug;
 
 protected:
-	TArray<AActor*> OverlappedActors;
+	virtual void ToggleCurrentEquippedWeaponCollision(bool bShouldEnable);
+	virtual void ToggleBodyCollisionBoxCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
 
+	TArray<AActor*> OverlappedActors;
 
 private:
 	TMap<FGameplayTag, TObjectPtr<AWWeaponBase>> CharacterCarriedWeaponMap;
