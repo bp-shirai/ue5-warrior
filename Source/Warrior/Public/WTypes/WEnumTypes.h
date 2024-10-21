@@ -20,3 +20,18 @@ enum class EWSuccessType : uint8
 	Successful,
 	Failed,
 };
+
+UENUM()
+enum class EWCountdownActionInput : uint8
+{
+	Start,
+	Cancel,
+};
+
+UENUM()
+enum class EWCountdownActionOutput : uint8
+{
+	Updated,
+	Completed,
+	Canceled,
+};

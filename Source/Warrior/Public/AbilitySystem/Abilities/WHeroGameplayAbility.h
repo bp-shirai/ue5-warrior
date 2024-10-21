@@ -9,6 +9,7 @@
 class AWHeroCharacter;
 class AWHeroController;
 class UHeroCombatComponent;
+class UHeroUIComponent;
 
 /**
  *
@@ -19,19 +20,24 @@ class WARRIOR_API UWHeroGameplayAbility : public UWGameplayAbility
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
-	AWHeroCharacter* GetHeroCharacterFromActorInfo();
+	UFUNCTION(BlueprintPure)
+	AWHeroCharacter* GetHeroCharacterFromActorInfo() const;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
-	AWHeroController* GetHeroControllerFromActorInfo();
+	UFUNCTION(BlueprintPure)
+	AWHeroController* GetHeroControllerFromActorInfo() const;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
-	UHeroCombatComponent* GetHeroCombatComponentFromActorInfo();
+	UFUNCTION(BlueprintPure)
+	UHeroCombatComponent* GetHeroCombatComponentFromActorInfo() const;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
-	FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount);
+	UFUNCTION(BlueprintPure)
+	UHeroUIComponent* GetHeroUIComponentFromActorInfo() const;
 
-private:
-	TWeakObjectPtr<AWHeroCharacter> CachedHeroCharacter;
-	TWeakObjectPtr<AWHeroController> CachedHeroController;
+	UFUNCTION(BlueprintPure)
+	FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount) const;
+
+	UFUNCTION(BlueprintPure)
+	float GetCurrentEquippedWeaponDamageAtAbilityLevel() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool GetAbilityRemainingCooldownByTag(FGameplayTag InCooldownTag, float& TotalCooldownTime, float& RemainingCooldownTime) const;
 };

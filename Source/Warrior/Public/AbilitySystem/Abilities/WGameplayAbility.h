@@ -8,6 +8,8 @@
 
 class UPawnCombatComponent;
 class UWAbilitySystemComponent;
+struct FWGameplayAbilityActorInfo;
+
 
 UENUM(BlueprintType)
 enum class EWAbilityActivationPolicy : uint8
@@ -30,17 +32,22 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	//~ End UGameplayAbility Interface
 
-	UPROPERTY(EditDefaultsOnly, Category = "Warrior|Ability")
+	UPROPERTY(EditDefaultsOnly)
 	EWAbilityActivationPolicy AbilityActivationPolicy = EWAbilityActivationPolicy::OnTriggered;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintPure)
 	UPawnCombatComponent* GetPawnCombatComponentFromActorInfo() const;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintPure)
 	UWAbilitySystemComponent* GetWAbilitySystemComponentFromActorInfo() const;
 
-	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
+	FActiveGameplayEffectHandle ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability", meta = (DisplayName = "Apply Effect SpecHandle to Target", ExpandEnumAsExecs = "OutSuccessType"))
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Apply Effect SpecHandle to Target", ExpandEnumAsExecs = "OutSuccessType"))
 	FActiveGameplayEffectHandle BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle, EWSuccessType& OutSuccessType);
+
+	const FWGameplayAbilityActorInfo* GetWActorInfo(const FGameplayAbilityActorInfo* InInfo) const;
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyEffectSpecHandleToHitResult(const FGameplayEffectSpecHandle& InSpecHandle, const TArray<FHitResult>& InHitResults);
 };

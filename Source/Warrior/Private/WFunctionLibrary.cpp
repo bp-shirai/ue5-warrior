@@ -2,12 +2,12 @@
 
 #include "WFunctionLibrary.h"
 #include "AbilitySystem/WAbilitySystemComponent.h"
-// #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemGlobals.h"
 #include "Interfaces/PawnCombatInterface.h"
 #include "Controllers/WHeroController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "WGameplayTags.h"
+#include "WTypes/WCountdownAction.h"
 
 #include "WDebugHelper.h"
 
@@ -67,6 +67,7 @@ UPawnCombatComponent* UWFunctionLibrary::GetPawnCombatComponent(const AActor* In
 
 	return nullptr;
 }
+
 
 UPawnCombatComponent* UWFunctionLibrary::BP_GetPawnCombatComponentFromActor(const AActor* InActor, EWValidType& OutValidType)
 {
@@ -140,6 +141,35 @@ bool UWFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InIns
 	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InTargetActor);
 
 	FActiveGameplayEffectHandle ActiveHandle = SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
-	
+
 	return ActiveHandle.WasSuccessfullyApplied();
+}
+
+void UWFunctionLibrary::CountDown(const UObject* WorldContextObject, float TotalTime, float UpdateInterval, float& OutRemainingTime, EWCountdownActionInput CountdownInput, UPARAM(DisplayName = "Output") EWCountdownActionOutput& CountdownOutput, FLatentActionInfo LatentInfo)
+{
+	UWorld* World = GEngine ? GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull) : nullptr;
+	if (!World) return;
+
+	FLatentActionManager& LatentActionManager = World->GetLatentActionManager();
+
+	FWCountdownAction* FoundAction = LatentActionManager.FindExistingAction<FWCountdownAction>(LatentInfo.CallbackTarget, LatentInfo.UUID);
+
+	if (CountdownInput == EWCountdownActionInput::Start)
+	{
+		if (!FoundAction)
+		{
+			LatentActionManager.AddNewAction(
+				LatentInfo.CallbackTarget,
+				LatentInfo.UUID,
+				new FWCountdownAction(TotalTime, UpdateInterval, OutRemainingTime, CountdownOutput, LatentInfo));
+		}
+	}
+
+	if (CountdownInput == EWCountdownActionInput::Cancel)
+	{
+		if (FoundAction)
+		{
+			FoundAction->CancelAction();
+		}
+	}
 }

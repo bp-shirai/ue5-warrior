@@ -11,6 +11,8 @@
 #include "Widgets/WUserWidgetBase.h"
 #include "WFunctionLibrary.h"
 
+//#include "Components/Combat/WeaponMeshComponent.h"
+
 #include "WDebugHelper.h"
 
 AWEnemyCharacter::AWEnemyCharacter()
@@ -35,14 +37,17 @@ AWEnemyCharacter::AWEnemyCharacter()
 	EnemyHealthWidgetComponent->SetupAttachment(GetMesh());
 
 	LeftHandCollisionBox = CreateDefaultSubobject<UBoxComponent>("LeftHandCollisionBox");
-	LeftHandCollisionBox->SetupAttachment(GetMesh(), LeftHandCollisionBoxAttachBoneName);
+	LeftHandCollisionBox->SetupAttachment(GetMesh());
 	LeftHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	LeftHandCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnCollisionBoxBeginOverlap);
 
 	RightHandCollisionBox = CreateDefaultSubobject<UBoxComponent>("RightHandCollisionBox");
-	RightHandCollisionBox->SetupAttachment(GetMesh(), RightHandCollisionBoxAttachBoneName);
+	RightHandCollisionBox->SetupAttachment(GetMesh());
 	RightHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightHandCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnCollisionBoxBeginOverlap);
+
+//	EnemyWeaponMeshComponent = CreateDefaultSubobject<UWeaponMeshComponent>("EnemyWeaponMesh");
+//	EnemyWeaponMeshComponent->SetupAttachment(GetMesh());
 }
 
 void AWEnemyCharacter::BeginPlay()

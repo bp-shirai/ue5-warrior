@@ -1,41 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AbilitySystem/Abilities/WEnemyGameplayAbility.h"
-#include "Characters/WEnemyCharacter.h"
 #include "AbilitySystem/WAbilitySystemComponent.h"
+#include "AbilitySystem/WAbilityTypes.h"
+#include "Characters/WEnemyCharacter.h"
 #include "WGameplayTags.h"
 
 AWEnemyCharacter* UWEnemyGameplayAbility::GetEnemyCharacterFromActorInfo() const
 {
-	// if (!CachedEnemyCharacter.IsValid())
-	// {
-	//     CachedEnemyCharacter = Cast<AWEnemyCharacter>(CurrentActorInfo->AvatarActor);
-	// }
-	// return CachedEnemyCharacter.IsValid() ? CachedEnemyCharacter.Get() : nullptr;
-	if (!ensure(CurrentActorInfo))
-	{
-		return nullptr;
-	}
+	const FWGameplayAbilityActorInfo* ActorInfo = GetWActorInfo(CurrentActorInfo);
 
-	return CastChecked<AWEnemyCharacter>(CurrentActorInfo->AvatarActor.Get());
+	return ActorInfo ? ActorInfo->EnemyCharacter.Get() : nullptr;
 }
 
 UEnemyCombatComponent* UWEnemyGameplayAbility::GetEnemyCombatComponentFromActorInfo() const
 {
-	if (!ensure(CurrentActorInfo))
-	{
-		return nullptr;
-	}
-
-	return GetEnemyCharacterFromActorInfo()->GetEnemyCombatComponent();
+	const AWEnemyCharacter* EnemyCharacter = GetEnemyCharacterFromActorInfo();
+	return EnemyCharacter ? EnemyCharacter->GetEnemyCombatComponent() : nullptr;
 }
 
 FGameplayEffectSpecHandle UWEnemyGameplayAbility::MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat) const
 {
-	check(EffectClass);
+	ensure(EffectClass);
 
-	UWAbilitySystemComponent* ASC = GetWAbilitySystemComponentFromActorInfo();
-	AActor* AvatarActor			  = GetAvatarActorFromActorInfo();
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	AActor* AvatarActor			 = GetAvatarActorFromActorInfo();
 
 	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 	ContextHandle.SetAbility(this);
@@ -43,8 +32,9 @@ FGameplayEffectSpecHandle UWEnemyGameplayAbility::MakeEnemyDamageEffectSpecHandl
 	ContextHandle.AddInstigator(AvatarActor, AvatarActor);
 
 	FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(EffectClass, GetAbilityLevel(), ContextHandle);
-
-	EffectSpecHandle.Data->SetSetByCallerMagnitude(WTags::Shared_SetByCaller_BaseDamage, InDamageScalableFloat.GetValueAtLevel(GetAbilityLevel()));
-
+	if (EffectSpecHandle.IsValid())
+	{
+		EffectSpecHandle.Data->SetSetByCallerMagnitude(WTags::Shared_SetByCaller_BaseDamage, InDamageScalableFloat.GetValueAtLevel(GetAbilityLevel()));
+	}
 	return EffectSpecHandle;
 }

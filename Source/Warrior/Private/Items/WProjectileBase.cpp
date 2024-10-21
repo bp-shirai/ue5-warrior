@@ -48,7 +48,6 @@ void AWProjectileBase::BeginPlay()
 
 void AWProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
 	BP_OnSpawnProjectileHitFX(Hit.ImpactPoint);
 
 	APawn* HitPawn = Cast<APawn>(OtherActor);
@@ -69,7 +68,7 @@ void AWProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor
 	}
 
 	FGameplayEventData Data;
-	Data.Instigator = this;
+	Data.Instigator = GetInstigator();
 	Data.Target		= HitPawn;
 
 	if (bIsValidBlock)
@@ -87,6 +86,21 @@ void AWProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor
 
 void AWProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OverlappedActors.Contains(OtherActor)) return;
+
+	OverlappedActors.AddUnique(OtherActor);
+
+	if (APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		FGameplayEventData Data;
+		Data.Instigator = GetInstigator();
+		Data.Target		= HitPawn;
+
+		if (UWFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn))
+		{
+			HandleApplyProjectileDamage(HitPawn, Data);
+		}
+	}
 }
 
 void AWProjectileBase::HandleApplyProjectileDamage(APawn* InHitPawn, const FGameplayEventData& InPayload)

@@ -83,9 +83,10 @@ void UAbilityTask_WaitSpawnEnemies::OnEnemyClassLoaded()
 		UNavigationSystemV1::K2_GetRandomReachablePointInRadius(this, SpawnOrigin, RandomLocation, RandomSpawnRadius);
 
 		float HalfHeight = 150.f;
-		if (LoadedClass->GetDefaultObject<AWEnemyCharacter>())
+		const AWEnemyCharacter* EnemyCharacterClass = LoadedClass->GetDefaultObject<AWEnemyCharacter>();
+		if (EnemyCharacterClass)
 		{
-			HalfHeight = LoadedClass->GetDefaultObject<AWEnemyCharacter>()->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+			HalfHeight = EnemyCharacterClass->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 		}
 
 		RandomLocation += FVector(0.f, 0.f, HalfHeight);

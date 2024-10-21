@@ -84,3 +84,8 @@ void UPawnCombatComponent::ToggleCurrentEquippedWeaponCollision(bool bShouldEnab
 void UPawnCombatComponent::ToggleBodyCollisionBoxCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType)
 {
 }
+
+void UPawnCombatComponent::SetCurrentEquipWeaponByTag(FGameplayTag InWeaponTag)
+{
+	CurrentEquippedWeaponTag = InWeaponTag;
+}

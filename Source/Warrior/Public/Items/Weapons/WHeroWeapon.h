@@ -16,7 +16,7 @@ class WARRIOR_API AWHeroWeapon : public AWWeaponBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Warrior|Weapons")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
 	FWHeroWeaponData HeroWeaponData;
 
 	UFUNCTION(BlueprintCallable)

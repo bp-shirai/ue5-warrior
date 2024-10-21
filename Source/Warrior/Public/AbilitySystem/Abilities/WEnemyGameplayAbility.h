@@ -18,13 +18,13 @@ class WARRIOR_API UWEnemyGameplayAbility : public UWGameplayAbility
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintPure)
 	AWEnemyCharacter* GetEnemyCharacterFromActorInfo() const;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintPure)
 	UEnemyCombatComponent* GetEnemyCombatComponentFromActorInfo() const;
 
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintPure)
 	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat) const;
 
 private:

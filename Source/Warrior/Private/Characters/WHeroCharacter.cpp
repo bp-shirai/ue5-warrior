@@ -82,6 +82,7 @@ void AWHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_SwitchTarget, ETriggerEvent::Triggered, this, &ThisClass::Input_SwitchTargetTriggered);
 	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_SwitchTarget, ETriggerEvent::Completed, this, &ThisClass::Input_SwitchTargetCompleted);
 
+	WInputComponent->BindNativeInputAction(InputConfigDataAsset, WTags::Input_Pickup_Stones, ETriggerEvent::Started, this, &ThisClass::Input_PickupStonesStarted);
 
 	WInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 }
@@ -142,6 +143,13 @@ void AWHeroCharacter::Input_SwitchTargetCompleted(const FInputActionValue& Input
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, EventTag, Data);
 }
 
+void AWHeroCharacter::Input_PickupStonesStarted(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Data;
+	FGameplayTag EventTag = WTags::Player_Event_ConsumeStones;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, EventTag, Data);
+}
+
 
 UPawnCombatComponent* AWHeroCharacter::GetPawnCombatComponent() const
 {
@@ -153,7 +161,7 @@ UPawnUIComponent* AWHeroCharacter::GetPawnUIComponent() const
 	return HeroUIComponent;
 }
 
-// UHeroUIComponent* AWHeroCharacter::GetHeroUIComponent() const
-// {
-// 	return HeroUIComponent;
-// }
+UHeroUIComponent* AWHeroCharacter::GetHeroUIComponent() const
+{
+	return HeroUIComponent;
+}

@@ -2,8 +2,13 @@
 
 #include "AbilitySystem/Abilities/WGameplayAbility.h"
 #include "AbilitySystem/WAbilitySystemComponent.h"
+#include "AbilitySystem/WAbilityTypes.h"
 #include "Components/Combat/PawnCombatComponent.h"
+#include "Interfaces/PawnCombatInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemGlobals.h"
+#include "WFunctionLibrary.h"
+#include "WGameplayTags.h"
 
 void UWGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -33,23 +38,32 @@ void UWGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 UPawnCombatComponent* UWGameplayAbility::GetPawnCombatComponentFromActorInfo() const
 {
-	if (!ensure(CurrentActorInfo) || !ensure(CurrentActorInfo->AvatarActor.IsValid())) { return nullptr; }
+	if (!ensure(CurrentActorInfo) || !ensure(CurrentActorInfo->AvatarActor.IsValid()))
+	{
+		return nullptr;
+	}
+	// return CurrentActorInfo->AvatarActor.Get()->FindComponentByClass<UPawnCombatComponent>();
 
-	return CurrentActorInfo->AvatarActor.Get()->FindComponentByClass<UPawnCombatComponent>();
+	const auto* CombatInterface = Cast<IPawnCombatInterface>(CurrentActorInfo->AvatarActor.Get());
+	return CombatInterface ? CombatInterface->GetPawnCombatComponent() : nullptr;
 }
 
 UWAbilitySystemComponent* UWGameplayAbility::GetWAbilitySystemComponentFromActorInfo() const
 {
-	UAbilitySystemComponent* AbilitySystemComponent = CurrentActorInfo ? CurrentActorInfo->AbilitySystemComponent.Get() : nullptr;
-	ensure(AbilitySystemComponent);
+	//	UAbilitySystemComponent* AbilitySystemComponent = CurrentActorInfo ? CurrentActorInfo->AbilitySystemComponent.Get() : nullptr;
+	//	ensure(AbilitySystemComponent);
+	//	return Cast<UWAbilitySystemComponent>(AbilitySystemComponent);
 
-	return Cast<UWAbilitySystemComponent>(AbilitySystemComponent);
+	const FWGameplayAbilityActorInfo* ActorInfo = GetWActorInfo(CurrentActorInfo);
+
+	return ActorInfo ? ActorInfo->WAbilitySystemComponent.Get() : nullptr;
 }
 
-FActiveGameplayEffectHandle UWGameplayAbility::NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+FActiveGameplayEffectHandle UWGameplayAbility::ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
 {
 	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);
+	// UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 
 	check(SourceASC && TargetASC && InSpecHandle.IsValid());
 
@@ -58,9 +72,40 @@ FActiveGameplayEffectHandle UWGameplayAbility::NativeApplyEffectSpecHandleToTarg
 
 FActiveGameplayEffectHandle UWGameplayAbility::BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle, EWSuccessType& OutSuccessType)
 {
-	FActiveGameplayEffectHandle ActiveGameplayEffectHandle = NativeApplyEffectSpecHandleToTarget(TargetActor, InSpecHandle);
+	const FActiveGameplayEffectHandle ActiveEffectHandle = ApplyEffectSpecHandleToTarget(TargetActor, InSpecHandle);
 
-	OutSuccessType = ActiveGameplayEffectHandle.WasSuccessfullyApplied() ? EWSuccessType::Successful : EWSuccessType::Failed;
-	
-	return ActiveGameplayEffectHandle;
+	OutSuccessType = ActiveEffectHandle.WasSuccessfullyApplied() ? EWSuccessType::Successful : EWSuccessType::Failed;
+
+	return ActiveEffectHandle;
+}
+
+const FWGameplayAbilityActorInfo* UWGameplayAbility::GetWActorInfo(const FGameplayAbilityActorInfo* InInfo) const
+{
+	return static_cast<const FWGameplayAbilityActorInfo*>(InInfo);
+}
+
+void UWGameplayAbility::ApplyEffectSpecHandleToHitResult(const FGameplayEffectSpecHandle& InSpecHandle, const TArray<FHitResult>& InHitResults)
+{
+	if (InHitResults.IsEmpty()) return;
+
+	const APawn* OwningPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
+
+	for (const FHitResult& Hit : InHitResults)
+	{
+		if (APawn* HitPawn = Cast<APawn>(Hit.GetActor()))
+		{
+			if (UWFunctionLibrary::IsTargetPawnHostile(OwningPawn, HitPawn))
+			{
+				const FActiveGameplayEffectHandle ActiveEffectHandle = ApplyEffectSpecHandleToTarget(HitPawn, InSpecHandle);
+				if (ActiveEffectHandle.WasSuccessfullyApplied())
+				{
+					FGameplayEventData Data;
+					Data.Instigator = OwningPawn;
+					Data.Target		= HitPawn;
+
+					UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitPawn, WTags::Shared_Event_HitReact, Data);
+				}
+			}
+		}
+	}
 }

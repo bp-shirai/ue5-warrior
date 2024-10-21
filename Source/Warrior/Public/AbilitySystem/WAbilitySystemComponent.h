@@ -6,6 +6,8 @@
 #include "WTypes/WStructTypes.h"
 #include "WAbilitySystemComponent.generated.h"
 
+
+
 /**
  *
  */
@@ -18,12 +20,18 @@ public:
 	void OnAbilityInputPressed(const FGameplayTag& InInputTag);
 	void OnAbilityInputReleased(const FGameplayTag& InInputTag);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability", meta = (ApplyLevel = "1"))
-	void GrantHeroWeaponAbilities(const TArray<FWHeroAbilitySet>& InDefaultWeaponAbilities, int32 ApplyLevel, TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles);
+	UFUNCTION(BlueprintCallable, meta = (ApplyLevel = "1"))
+	void GrantHeroWeaponAbilities(const TArray<FWHeroAbilitySet>& InDefaultWeaponAbilities, const TArray<FWHeroSpecialAbilitySet>& InSpecialWeaponAbilities, int32 ApplyLevel, TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintCallable)
 	void RemovedGrantedHeroWeaponAbilities(UPARAM(ref) TArray<FGameplayAbilitySpecHandle>& InSpecHandlesToRemove);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintCallable)
 	bool TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate);
+
+	UFUNCTION(BlueprintCallable)
+	bool TryActivateAbilityByTagExact(FGameplayTag AbilityTagToActivate);
+
+
+	FGameplayAbilitySpec* FindAbilitySpecFromTag(FGameplayTag Tag) const;
 };

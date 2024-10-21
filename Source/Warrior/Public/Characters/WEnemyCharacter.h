@@ -10,6 +10,9 @@ class UEnemyCombatComponent;
 class UEnemyUIComponent;
 class UWidgetComponent;
 class UBoxComponent;
+
+//class UWeaponMeshComponent;
+
 /**
  *
  */
@@ -43,26 +46,29 @@ protected:
 	//~ End UObject Interface
 #endif
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|Combat")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default|Combat")
 	TObjectPtr<UEnemyCombatComponent> EnemyCombatComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|Combat")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default|Combat")
 	TObjectPtr<UBoxComponent> LeftHandCollisionBox;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Warrior|Combat")
-	FName LeftHandCollisionBoxAttachBoneName;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|Combat")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default|Combat")
 	TObjectPtr<UBoxComponent> RightHandCollisionBox;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Warrior|Combat")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default|Combat")
+	FName LeftHandCollisionBoxAttachBoneName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default|Combat")
 	FName RightHandCollisionBoxAttachBoneName;
 
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|Combat")
+	//TObjectPtr<UWeaponMeshComponent> EnemyWeaponMeshComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|UI")
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default|UI")
 	TObjectPtr<UEnemyUIComponent> EnemyUIComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Warrior|UI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Default|UI")
 	TObjectPtr<UWidgetComponent> EnemyHealthWidgetComponent;
 
 	UFUNCTION()
