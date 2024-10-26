@@ -6,9 +6,11 @@
 #include "Interfaces/PawnCombatInterface.h"
 #include "Controllers/WHeroController.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "WGameplayTags.h"
 #include "WTypes/WCountdownAction.h"
 #include "WGameInstance.h"
+#include "SaveGame/WSaveGame.h"
 
 #include "WDebugHelper.h"
 
@@ -179,4 +181,64 @@ UWGameInstance* UWFunctionLibrary::GetWGameInstance(const UObject* WorldContextO
 	UWorld* World = GEngine ? GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull) : nullptr;
 
 	return World ? World->GetGameInstance<UWGameInstance>() : nullptr;
+}
+
+void UWFunctionLibrary::ToggleInputMode(const UObject* WorldContextObject, EWInputMode InInputMode)
+{
+	UWorld* World = GEngine ? GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull) : nullptr;
+
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+
+	if (!PlayerController) return;
+
+	FInputModeUIOnly UIOnlyMode;
+	FInputModeGameOnly GameOnlyMode;
+
+	switch (InInputMode)
+	{
+	case EWInputMode::GameOnly:
+		PlayerController->SetInputMode(GameOnlyMode);
+		PlayerController->bShowMouseCursor = false;
+		break;
+
+	case EWInputMode::UIOnly:
+		PlayerController->SetInputMode(UIOnlyMode);
+		PlayerController->bShowMouseCursor = true;
+		break;
+	}
+}
+
+void UWFunctionLibrary::SaveCurrentGameDifficulty(EWGameDifficulty InDifficultyToSave)
+{
+	USaveGame* SaveGameObject = UGameplayStatics::CreateSaveGameObject(UWSaveGame::StaticClass());
+
+	if (UWSaveGame* WSaveGameObject = Cast<UWSaveGame>(SaveGameObject))
+	{
+		WSaveGameObject->SavedCurrentGameDifficulty = InDifficultyToSave;
+
+		const FString SlotName = WTags::GameData_SaveGame_Slot_1.GetTag().ToString();
+		const bool bWasSaved   = UGameplayStatics::SaveGameToSlot(WSaveGameObject, SlotName, 0);
+
+		//Debug::Print(bWasSaved ? TEXT("Difficulty Saved") : TEXT("Difficulty NOT Saved"), bWasSaved ? FColor::Green : FColor::Red);
+	}
+}
+
+bool UWFunctionLibrary::TryLoadSavedGameDifficulty(EWGameDifficulty& OutSavedDifficulty)
+{
+	const FString SlotName = WTags::GameData_SaveGame_Slot_1.GetTag().ToString();
+
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		USaveGame* SaveGameObject = UGameplayStatics::LoadGameFromSlot(SlotName, 0);
+
+		if (UWSaveGame* WSaveGameObject = Cast<UWSaveGame>(SaveGameObject))
+		{
+			OutSavedDifficulty = WSaveGameObject->SavedCurrentGameDifficulty;
+			
+			//Debug::Print(TEXT("Loading Successful"), FColor::Green);
+			return true;
+		}
+	}
+
+	return false;
 }

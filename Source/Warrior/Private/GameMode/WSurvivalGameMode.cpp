@@ -6,8 +6,22 @@
 #include "Engine/TargetPoint.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
+#include "WFunctionLibrary.h"
 
 #include "WDebugHelper.h"
+
+
+void AWSurvivalGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	EWGameDifficulty SavedGameDifficulty;
+
+	if (UWFunctionLibrary::TryLoadSavedGameDifficulty(SavedGameDifficulty))
+	{
+		CurrentGameDifficulty = SavedGameDifficulty;
+	}
+}
 
 void AWSurvivalGameMode::BeginPlay()
 {
