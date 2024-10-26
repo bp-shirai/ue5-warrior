@@ -8,6 +8,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "WGameplayTags.h"
 #include "WTypes/WCountdownAction.h"
+#include "WGameInstance.h"
 
 #include "WDebugHelper.h"
 
@@ -67,7 +68,6 @@ UPawnCombatComponent* UWFunctionLibrary::GetPawnCombatComponent(const AActor* In
 
 	return nullptr;
 }
-
 
 UPawnCombatComponent* UWFunctionLibrary::BP_GetPawnCombatComponentFromActor(const AActor* InActor, EWValidType& OutValidType)
 {
@@ -172,4 +172,11 @@ void UWFunctionLibrary::CountDown(const UObject* WorldContextObject, float Total
 			FoundAction->CancelAction();
 		}
 	}
+}
+
+UWGameInstance* UWFunctionLibrary::GetWGameInstance(const UObject* WorldContextObject)
+{
+	UWorld* World = GEngine ? GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull) : nullptr;
+
+	return World ? World->GetGameInstance<UWGameInstance>() : nullptr;
 }

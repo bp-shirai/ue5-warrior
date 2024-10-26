@@ -35,3 +35,12 @@ enum class EWCountdownActionOutput : uint8
 	Completed,
 	Canceled,
 };
+
+UENUM(BlueprintType)
+enum class EWGameDifficulty : uint8
+{
+	Easy,
+	Normal,
+	Hard,
+	VeryHard,
+};

@@ -3,3 +3,8 @@
 
 #include "GameMode/WBaseGameMode.h"
 
+AWBaseGameMode::AWBaseGameMode()
+{
+    PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bStartWithTickEnabled = true;
+}

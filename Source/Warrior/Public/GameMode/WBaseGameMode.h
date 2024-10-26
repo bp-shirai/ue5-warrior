@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "WTypes/WEnumTypes.h"
 #include "WBaseGameMode.generated.h"
 
 /**
@@ -14,4 +15,13 @@ class WARRIOR_API AWBaseGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	AWBaseGameMode();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Game Settings")
+	EWGameDifficulty CurrentGameDifficulty;
+
+public:
+	FORCEINLINE EWGameDifficulty GetCurrentGameDifficulty() const { return CurrentGameDifficulty; }
 };

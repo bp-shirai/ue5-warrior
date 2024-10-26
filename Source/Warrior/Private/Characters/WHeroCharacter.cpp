@@ -14,6 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "WGameplayTags.h"
+#include "GameMode/WBaseGameMode.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 
@@ -45,7 +46,6 @@ AWHeroCharacter::AWHeroCharacter()
 	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComponent");
 
 	HeroUIComponent = CreateDefaultSubobject<UHeroUIComponent>("HeroUIComponent");
-
 }
 
 void AWHeroCharacter::PossessedBy(AController* NewController)
@@ -56,8 +56,21 @@ void AWHeroCharacter::PossessedBy(AController* NewController)
 	{
 		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
 		{
+			int32 AbilityApplyLevel = 1;
+
+			if (const AWBaseGameMode* BaseGameMode = GetWorld()->GetAuthGameMode<AWBaseGameMode>())
+			{
+				switch (BaseGameMode->GetCurrentGameDifficulty())
+				{
+				case EWGameDifficulty::Easy: AbilityApplyLevel = 4; break;
+				case EWGameDifficulty::Normal: AbilityApplyLevel = 3; break;
+				case EWGameDifficulty::Hard: AbilityApplyLevel = 2; break;
+				case EWGameDifficulty::VeryHard: AbilityApplyLevel = 1; break;
+				}
+			}
+
 			// Grants an Abilities
-			LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent);
+			LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent, AbilityApplyLevel);
 		}
 	}
 }
@@ -133,7 +146,6 @@ void AWHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
 void AWHeroCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue)
 {
 	SwitchDirection = InputActionValue.Get<FVector2D>();
-
 }
 
 void AWHeroCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue)
@@ -149,7 +161,6 @@ void AWHeroCharacter::Input_PickupStonesStarted(const FInputActionValue& InputAc
 	FGameplayTag EventTag = WTags::Player_Event_ConsumeStones;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, EventTag, Data);
 }
-
 
 UPawnCombatComponent* AWHeroCharacter::GetPawnCombatComponent() const
 {

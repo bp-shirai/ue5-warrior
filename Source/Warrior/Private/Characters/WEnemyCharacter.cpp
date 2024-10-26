@@ -10,8 +10,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Widgets/WUserWidgetBase.h"
 #include "WFunctionLibrary.h"
+#include "GameMode/WBaseGameMode.h"
 
-//#include "Components/Combat/WeaponMeshComponent.h"
+// #include "Components/Combat/WeaponMeshComponent.h"
 
 #include "WDebugHelper.h"
 
@@ -46,8 +47,8 @@ AWEnemyCharacter::AWEnemyCharacter()
 	RightHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightHandCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnCollisionBoxBeginOverlap);
 
-//	EnemyWeaponMeshComponent = CreateDefaultSubobject<UWeaponMeshComponent>("EnemyWeaponMesh");
-//	EnemyWeaponMeshComponent->SetupAttachment(GetMesh());
+	//	EnemyWeaponMeshComponent = CreateDefaultSubobject<UWeaponMeshComponent>("EnemyWeaponMesh");
+	//	EnemyWeaponMeshComponent->SetupAttachment(GetMesh());
 }
 
 void AWEnemyCharacter::BeginPlay()
@@ -71,15 +72,29 @@ void AWEnemyCharacter::InitEnemyStartUpData()
 {
 	if (CharacterStartUpData.IsNull()) return;
 
+	int32 AbilityApplyLevel = 1;
+
+	if (const AWBaseGameMode* BaseGameMode = GetWorld()->GetAuthGameMode<AWBaseGameMode>())
+	{
+		switch (BaseGameMode->GetCurrentGameDifficulty())
+		{
+		case EWGameDifficulty::Easy: AbilityApplyLevel = 1; break;
+		case EWGameDifficulty::Normal: AbilityApplyLevel = 2; break;
+		case EWGameDifficulty::Hard: AbilityApplyLevel = 3; break;
+		case EWGameDifficulty::VeryHard: AbilityApplyLevel = 4; break;
+		}
+	}
+
 	UAssetManager::GetStreamableManager().RequestAsyncLoad(
 		CharacterStartUpData.ToSoftObjectPath(),
-		FStreamableDelegate::CreateLambda([this]() {
-			if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
-			{
-				LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent);
-				// Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
-			}
-		}));
+		FStreamableDelegate::CreateLambda(
+			[this, AbilityApplyLevel]() {
+				if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
+				{
+					LoadedData->GiveToAbilitySystemComponent(WAbilitySystemComponent, AbilityApplyLevel);
+					// Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
+				}
+			}));
 }
 
 UPawnCombatComponent* AWEnemyCharacter::GetPawnCombatComponent() const
